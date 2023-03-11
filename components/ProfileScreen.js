@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleShee, ActivityIndicator } from 'react-native';
+import { Text, View, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-web';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class ProfileScreen extends Component{
 
@@ -18,7 +19,7 @@ class ProfileScreen extends Component{
 
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.checkLoggedIn();
+      this.checkLoggedIn();      
     });
     this.getProfileInfo();
   }
@@ -34,14 +35,30 @@ class ProfileScreen extends Component{
     }
   };
 
-  getProfileInfo(){
-    let to_send = {
-      email: this.state.email,
-      password: this.state.password
-    };
-    return fetch("http://localhost:3333/api/1.0.0/user/" + {user_id})
-     .then((response) => response.json())
+  getProfileInfo = async () =>{
+    const user_id = await AsyncStorage.getItem('whatsthat_user_id');
+    console.log(user_id);
+
+    return fetch("http://localhost:3333/api/1.0.0/user/" + user_id, {
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+     .then((response) => {
+      if(response.status === 200){
+        console.log("fetched successfully");
+        return response.json();
+      }else if(response.status === 401){
+        console.log("Unauthorized");
+      }else if(response.status === 404){
+        console.log("User not found");
+      }else{
+        console.log("Server Error");
+      }
+     })
      .then((responseJson) => {
+      //console.log(responseJson)
        this.setState({
          isLoading: false,
          userData: responseJson
@@ -71,11 +88,7 @@ class ProfileScreen extends Component{
               data={this.state.userData}
               renderItem={({item}) => (
                 <View>
-                  <Text>{item.item_name}</Text>
-                  <Button
-                    title="Delete"
-                    onPress={() => console.log("delete")}
-                  />                  
+                  <Text>{item.item_name}</Text>                  
                 </View>
               )}
               keyExtractor={({id}, index) => id}
