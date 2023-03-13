@@ -134,9 +134,10 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      width: "80%",
+      width: "100%",
       alignItems: "stretch",
-      justifyContent: "center"
+      justifyContent: "center",
+      backgroundColor: '#ebe7dd'
     },
     formContainer: {
   
@@ -156,7 +157,9 @@ const styles = StyleSheet.create({
     },
     button: {
       marginBottom: 30,
-      backgroundColor: '#2196F3'
+      backgroundColor: '#2196F3',
+      width: '50%',
+      alignSelf: "center"
     },
     buttonText: {
       textAlign: 'center',
