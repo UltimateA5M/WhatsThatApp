@@ -9,8 +9,8 @@ export default class LoginScreen extends Component {
         super(props);
 
         this.state = {
-            email: "",
-            password: "",
+            email: "asim@gmail.com",
+            password: "Password123!",
             error: "", 
             submitted: false
         }

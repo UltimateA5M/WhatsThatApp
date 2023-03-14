@@ -72,18 +72,21 @@ export default class SearchScreen extends Component{
           <ActivityIndicator />
         </View>
       );
-    }else{    
+    }else{ 
+      console.log("HERE", this.state.userData);   
       return(
           <View style={styles.container}>
             <Text>Search Screen</Text>
             <FlatList
               data={this.state.userData}
-              renderItem={({user}) => (
+              renderItem={(user) => (
                 <View>
-                  <Text>{user.given_name}</Text>                  
+                  {/* <Text>HERE {JSON.stringify(user)}</Text> */}
+                  <Text>{user.item.given_name}</Text>                  
                 </View>
               )}
-              keyExtractor={({id}, index) => id}
+             // keyExtractor={(user.user_id, index) => user.user_id}
+              keyExtractor={(user, index) => user.user_id}
               //keyExtractor={(user) => user.user_id}
             />
           </View>

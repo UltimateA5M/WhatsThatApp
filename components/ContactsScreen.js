@@ -80,7 +80,7 @@ export default class ContactsScreen extends Component{
               data={this.state.userData}
               renderItem={({contact}) => (
                 <View>
-                  <Text>first name: {contact.first_name}</Text>                  
+                  <Text>first name: {contact.item.first_name}</Text>                  
                 </View>
               )}
               //keyExtractor={(user) => user.user_id}
