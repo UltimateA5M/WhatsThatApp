@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, Button, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
 import { FlatList } from 'react-native-web';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,7 +11,8 @@ export default class SearchScreen extends Component{
     this.state = {
         first_name: "",
         last_name: "",
-        email: "", 
+        email: "",
+        searchValue: "",
         isLoading: true,
         userData: [],
     }
@@ -21,7 +22,6 @@ export default class SearchScreen extends Component{
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();      
     });
-    this.search();
   }
   
   componentWillUnmount(){
@@ -33,10 +33,13 @@ export default class SearchScreen extends Component{
     if (value == null){
       this.props.navigation.navigate('Login');
     }
+    else{
+      this.setState({ isLoading: false })
+    }
   };
 
   async search(){
-    return fetch("http://localhost:3333/api/1.0.0/search",{
+    return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.searchValue,{
       method: "GET",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
@@ -73,21 +76,32 @@ export default class SearchScreen extends Component{
         </View>
       );
     }else{ 
-      console.log("HERE", this.state.userData);   
       return(
           <View style={styles.container}>
             <Text>Search Screen</Text>
+            <TextInput
+              placeholder="Search..."
+              onChangeText={searchValue => this.setState({searchValue})}
+              defaultValue={this.state.searchValue}
+            />
+            
+            <View>
+              <TouchableOpacity onPress={() => this.search()}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>Search</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             <FlatList
               data={this.state.userData}
               renderItem={(user) => (
                 <View>
-                  {/* <Text>HERE {JSON.stringify(user)}</Text> */}
-                  <Text>{user.item.given_name}</Text>                  
+                  <Text>Name: {user.item.given_name} {user.item.family_name}</Text>
+                  <Text>Email: {user.item.email}</Text>
                 </View>
               )}
-             // keyExtractor={(user.user_id, index) => user.user_id}
               keyExtractor={(user, index) => user.user_id}
-              //keyExtractor={(user) => user.user_id}
             />
           </View>
       );
@@ -101,6 +115,17 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "stretch",
     justifyContent: "center"
-  }
+  },
+  button: {
+    marginBottom: 30,
+    backgroundColor: '#2196F3',
+    width: '50%',
+    alignSelf: "center"
+  },
+  buttonText: {
+    textAlign: 'center',
+    padding: 20,
+    color: 'white'
+  },
 });
 

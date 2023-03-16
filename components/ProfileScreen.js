@@ -12,7 +12,7 @@ class ProfileScreen extends Component{
         userId: "",
         first_name: "",
         last_name: "",
-        email: "", 
+        email: "",
         userData: {},
         isLoading: true,
         editable: false       
@@ -26,13 +26,13 @@ class ProfileScreen extends Component{
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
       this.getProfileInfo();
-    });    
+    });
   }
   
   componentWillUnmount(){
     this.unsubscribe();
   }
-
+  
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('whatsthat_session_token');
     if (value == null){
@@ -81,11 +81,13 @@ class ProfileScreen extends Component{
   }
 
   async updateInfo(){
-    let to_send = {};
+    let to_send = {
+      "first_name": this.state.first_name
+    };
 
-    if (this.state.first_name != this.state.userData.first_name){
-      to_send['first_name'] = this.state.first_name;
-    }
+    // if (this.state.first_name != this.state.userData.first_name){
+    //   to_send['first_name'] = this.state.first_name;
+    // }
 
     console.log(JSON.stringify(to_send));
 
@@ -95,7 +97,7 @@ class ProfileScreen extends Component{
       method: "PATCH",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token"),
-        'content_type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(to_send)
     })
@@ -139,15 +141,15 @@ class ProfileScreen extends Component{
               <TextInput
               defaultValue={this.state.userData.first_name}
               onChangeText={first_name => this.setState({first_name})}
-              editable={this.state.editable}
+              //editable={this.state.editable}
               />
-              <View>
+              {/* <View>
                   <TouchableOpacity onPress={this.toggleEditable}>
                       <View style={styles.button}>
                           <Text style={styles.buttonText}>Edit</Text>
                       </View>
                   </TouchableOpacity>
-              </View>
+              </View> */}
               <View>
                   <TouchableOpacity onPress={() => this.updateInfo()}>
                       <View style={styles.button}>
@@ -155,18 +157,6 @@ class ProfileScreen extends Component{
                       </View>
                   </TouchableOpacity>
               </View>
-              {/* <FlatList
-                data={this.state.userData}
-                renderItem={({user}) => (
-                  <View>
-                    <Text>First Name: {user.first_name}</Text>
-                    <Text>Last Name: {user.last_name}</Text>
-                    <Text>Email: {user.email}</Text>
-                  </View>
-                )}
-                //keyExtractor={(user) => user_id}
-                keyExtractor={({id}, index) => id}
-              /> */}
             </View>
           </SafeAreaView>
       );
