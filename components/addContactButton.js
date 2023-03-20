@@ -16,8 +16,7 @@ export default class addContactButton extends Component {
         this._onPressButton = this._onPressButton.bind(this)
     }
 
-    async addContact(){
-        const user_id = "";
+    async addContact( user_id ){
 
         return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/contact", {
             method: "POST",

@@ -13,20 +13,20 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Login">      
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen}/>
-        <Stack.Screen name="Tab" component={TabNav}/>
+      <Stack.Navigator screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e', 
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+      initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Login" }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: "Signup" }} />
+        <Stack.Screen name="Tab" component={TabNav} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

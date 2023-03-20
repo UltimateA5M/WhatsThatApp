@@ -13,7 +13,7 @@ export default class ContactsScreen extends Component{
         last_name: "",
         email: "", 
         isLoading: true,
-        userData: []
+        userData: [],
     }
   }
 
@@ -37,7 +37,7 @@ export default class ContactsScreen extends Component{
 
   async getContacts(){
     return fetch("http://localhost:3333/api/1.0.0/contacts",{
-      method: "GET",
+      method: "get",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
       }
@@ -58,7 +58,6 @@ export default class ContactsScreen extends Component{
          userData: responseJson
        })
        console.log(responseJson);
-       console.log(this.state.userData);
      })
      .catch((error) => {
        console.log(error);
@@ -72,19 +71,18 @@ export default class ContactsScreen extends Component{
           <ActivityIndicator />
         </View>
       );
-    }else{    
+    }else{
+      console.log("HERE:" + JSON.stringify(this.state.userData))
       return(
           <View style={styles.container}>
-            <Text>Contacts Screen</Text>
             <FlatList
               data={this.state.userData}
-              renderItem={({contact}) => (
+              renderItem={(contact) => (
                 <View>
-                  <Text>first name: {contact.item.first_name}</Text>                  
+                  <Text>first name: {contact.item.first_name}</Text>
                 </View>
               )}
-              //keyExtractor={(user) => user.user_id}
-              keyExtractor={({id}, index) => id}
+              keyExtractor={(contact, index) => contact.user_id}
             />
           </View>
       );

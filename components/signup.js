@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "stretch",
         justifyContent: "center",
-        backgroundColor: '#ebe7dd'
       },
     formContainer: {
   

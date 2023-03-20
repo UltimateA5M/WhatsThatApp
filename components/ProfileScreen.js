@@ -13,6 +13,7 @@ class ProfileScreen extends Component{
         first_name: "",
         last_name: "",
         email: "",
+        password: "",
         userData: {},
         isLoading: true,
         editable: false       
@@ -82,7 +83,10 @@ class ProfileScreen extends Component{
 
   async updateInfo(){
     let to_send = {
-      "first_name": this.state.first_name
+      "first_name": this.state.first_name,
+      "last_name": this.state.last_name,
+      "email": this.state.email,
+      "password": this.state.passwword
     };
 
     // if (this.state.first_name != this.state.userData.first_name){
@@ -134,31 +138,50 @@ class ProfileScreen extends Component{
       );
     }else{    
       return(
-          <SafeAreaView>
-            <View style={styles.container}>
-              <Text>Profile Screen</Text>
-              <Text>First Name:</Text>
-              <TextInput
-              defaultValue={this.state.userData.first_name}
-              onChangeText={first_name => this.setState({first_name})}
-              //editable={this.state.editable}
-              />
-              {/* <View>
+      <View style={styles.container}>
+        <Text>First Name:</Text>
+        <TextInput
+          style={{height: 40, borderWidth: 1, width: "100%"}}
+          defaultValue={this.state.userData.first_name}
+          onChangeText={first_name => this.setState({first_name})}
+          //editable={this.state.editable}
+          />
+          <Text>Last Name:</Text>
+          <TextInput
+            style={{height: 40, borderWidth: 1, width: "100%"}}
+            defaultValue={this.state.userData.last_name}
+            onChangeText={last_name => this.setState({last_name})}
+            //editable={this.state.editable}
+            />
+          <Text>Email:</Text>
+          <TextInput
+            style={{height: 40, borderWidth: 1, width: "100%"}}
+            defaultValue={this.state.userData.email}
+            onChangeText={email => this.setState({email})}
+            //editable={this.state.editable}
+          />
+          <Text>Password:</Text>
+          <TextInput
+            style={{height: 40, borderWidth: 1, width: "100%"}}  
+            defaultValue="password..."
+            onChangeText={password => this.setState({password})}
+            secureTextEntry
+          />
+          {/* <View>
                   <TouchableOpacity onPress={this.toggleEditable}>
                       <View style={styles.button}>
                           <Text style={styles.buttonText}>Edit</Text>
                       </View>
                   </TouchableOpacity>
               </View> */}
-              <View>
-                  <TouchableOpacity onPress={() => this.updateInfo()}>
-                      <View style={styles.button}>
-                          <Text style={styles.buttonText}>Update</Text>
-                      </View>
-                  </TouchableOpacity>
+          <View>
+            <TouchableOpacity onPress={() => this.updateInfo()}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Update</Text>
               </View>
-            </View>
-          </SafeAreaView>
+            </TouchableOpacity>
+          </View>
+      </View>
       );
     }
   }
@@ -167,7 +190,7 @@ class ProfileScreen extends Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "80%",
+    width: "100%",
     alignItems: "stretch",
     justifyContent: "center"
   },

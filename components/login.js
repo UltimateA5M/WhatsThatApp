@@ -73,7 +73,7 @@ export default class LoginScreen extends Component {
         return (
             <View style={styles.container}>
 
-                <View style={styles.formContainer}>
+                <View>
                     <View style={styles.email}>
                         <Text>Email:</Text>
                         <TextInput
@@ -107,7 +107,7 @@ export default class LoginScreen extends Component {
                         </>
                     </View>
             
-                    <View style={styles.loginbtn}>
+                    <View>
                         <TouchableOpacity onPress={this._onPressButton}>
                             <View style={styles.button}>
                                 <Text style={styles.buttonText}>Login</Text>
@@ -137,19 +137,12 @@ const styles = StyleSheet.create({
       width: "100%",
       alignItems: "stretch",
       justifyContent: "center",
-      backgroundColor: '#ebe7dd'
-    },
-    formContainer: {
-  
     },
     email:{
       marginBottom: 5
     },
     password:{
       marginBottom: 10
-    },
-    loginbtn:{
-  
     },
     signup:{
       justifyContent: "center",

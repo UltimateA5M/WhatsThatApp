@@ -12,11 +12,20 @@ const Tab = createBottomTabNavigator();
 
 export default function TabNav() {
   return (
-  <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} />
+  <Tab.Navigator screenOptions={{
+    headerStyle: {
+      backgroundColor: '#f4511e', 
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  }}
+  initialRouteName="Profile">
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "Profile" }} />
+      <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search" }} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} options={{ title: "Contacts" }} />
   </Tab.Navigator>
   );
 }
