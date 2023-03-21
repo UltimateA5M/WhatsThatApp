@@ -71,7 +71,6 @@ export default class SearchScreen extends Component{
   }
 
   async addContact( user_id ){
-
     return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/contact", {
         method: "POST",
         headers: {
@@ -83,6 +82,32 @@ export default class SearchScreen extends Component{
             return response.json();
         }else if(response.status === 400){
             throw "You can't add yourself as a contact"
+        }else if(response.status === 401){
+            throw "Unauthorized"
+        }else if(response.status === 404){
+            throw "Not Found"
+        }else{
+            throw "Server Error"
+        }
+    })
+    .catch((error) => {
+        this.setState({"error": error})
+        this.setState({"submitted": false});
+    })
+  }
+
+  async blockUser( user_id ){
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
+        method: "POST",
+        headers: {
+            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            return response.json();
+        }else if(response.status === 400){
+            throw "You can't block yourself"
         }else if(response.status === 401){
             throw "Unauthorized"
         }else if(response.status === 404){
@@ -128,7 +153,8 @@ export default class SearchScreen extends Component{
                 <View>
                   <Text>Name: {user.item.given_name} {user.item.family_name}</Text>
                   <Text>Email: {user.item.email}</Text>
-                  <Button title="Add" onPress={() => this.addContact(user.item.user_id)}/>
+                  <Button title="Add" style={styles.button} onPress={() => this.addContact(user.item.user_id)}/>
+                  <Button title="Block" style={styles.button} onPress={() => this.blockUser(user.item.user_id)}/>
                 </View>
               )}
               keyExtractor={(user, index) => user.user_id}

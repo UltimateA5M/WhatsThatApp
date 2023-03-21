@@ -22,9 +22,13 @@ export default function TabNav() {
     },
   }}
   initialRouteName="Profile">
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home", headerRight: () => (
+        <Button title="+Chat"/>
+      ) }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "Profile" }} />
-      <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search" }} />
+      <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search", headerRight: () => (
+        <Button title="View Blocked"/>
+      ) }} />
       <Tab.Screen name="Contacts" component={ContactsScreen} options={{ title: "Contacts" }} />
   </Tab.Navigator>
   );

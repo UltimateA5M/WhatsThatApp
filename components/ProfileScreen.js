@@ -9,6 +9,7 @@ class ProfileScreen extends Component{
     super(props);
 
     this.state = {
+        photo: null,
         userId: "",
         first_name: "",
         last_name: "",
@@ -45,6 +46,29 @@ class ProfileScreen extends Component{
     this.setState({
       editable: !this.state.editable
     })
+  }
+
+  async get_profile_image( user_id ){
+    fetch("http://localhost:3333/api/1.0.0/user/" + user_id + "/photo", {
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+    .then((response) => {
+      return response.blob()
+    })
+    .then((responseBlob) => {
+      let data = URL.createObjectURL(responseBlob);
+
+      this.setState({
+        photo: data,
+        isLoading: false
+      })
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   async getProfileInfo(){
@@ -139,6 +163,8 @@ class ProfileScreen extends Component{
     }else{    
       return(
       <View style={styles.container}>
+        {/* <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100}} /> */}
+
         <Text>First Name:</Text>
         <TextInput
           style={{height: 40, borderWidth: 1, width: "100%"}}

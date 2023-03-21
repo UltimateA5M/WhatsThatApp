@@ -4,6 +4,17 @@ import { Text, View, Button } from 'react-native';
 
 class HomeScreen extends Component{
 
+  constructor(props){
+    super(props);
+
+    this.state = {
+        error: "",
+        submitted: false,
+        isLoading: true,
+        chatsData: [],
+    }
+  }
+
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
@@ -20,6 +31,34 @@ class HomeScreen extends Component{
       this.props.navigation.navigate('Login');
     }
   };
+
+  async getChats(){
+    return fetch("http://localhost:3333/api/1.0.0/chats",{
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+     .then((response) => {
+      if(response.status === 200){
+        console.log("chats fetched successfully");
+        return response.json();
+      }else if(response.status === 401){
+        console.log("Unauthorized");
+      }else{
+        console.log("Server Error");
+      }
+     })
+     .then((responseJson) => {
+       this.setState({
+         isLoading: false,
+         chatsData: responseJson
+       })
+     })
+     .catch((error) => {
+       console.log(error);
+     })
+  }
 
   static navigationOptions = {
     header: null

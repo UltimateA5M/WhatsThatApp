@@ -64,6 +64,33 @@ export default class ContactsScreen extends Component{
      })
   }
 
+  async deleteContact( user_id ){
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/contact", {
+      method: "DELETE",
+      headers: {
+          "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            return response.json();
+            console.log("Contact Removed");
+        }else if(response.status === 400){
+            throw "You can't remove yourself as a contact"
+        }else if(response.status === 401){
+            throw "Unauthorized"
+        }else if(response.status === 404){
+            throw "Not Found"
+        }else{
+            throw "Server Error"
+        }
+    })
+    .catch((error) => {
+        this.setState({"error": error})
+        this.setState({"submitted": false});
+    })
+  }
+
   render(){
     if(this.state.isLoading){
       return(
@@ -72,14 +99,14 @@ export default class ContactsScreen extends Component{
         </View>
       );
     }else{
-      console.log("HERE:" + JSON.stringify(this.state.userData))
       return(
           <View style={styles.container}>
             <FlatList
               data={this.state.userData}
               renderItem={(contact) => (
                 <View>
-                  <Text>first name: {contact.item.first_name}</Text>
+                  <Text>{contact.item.first_name} {contact.item.last_name}</Text>
+                  <Button title="Remove" onPress={() => this.deleteContact(contact.item.user_id)}/>
                 </View>
               )}
               keyExtractor={(contact, index) => contact.user_id}
