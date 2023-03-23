@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Text, View, Button, StyleSheet, ActivityIndicator, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { TextInput } from 'react-native-web';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,6 +28,7 @@ class ProfileScreen extends Component{
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
       this.getProfileInfo();
+      this.get_profile_image();
     });
   }
   
@@ -48,7 +49,8 @@ class ProfileScreen extends Component{
     })
   }
 
-  async get_profile_image( user_id ){
+  async get_profile_image(){
+    const user_id = await AsyncStorage.getItem('whatsthat_user_id');
     fetch("http://localhost:3333/api/1.0.0/user/" + user_id + "/photo", {
       method: "GET",
       headers: {
@@ -106,18 +108,23 @@ class ProfileScreen extends Component{
   }
 
   async updateInfo(){
-    let to_send = {
-      "first_name": this.state.first_name,
-      "last_name": this.state.last_name,
-      "email": this.state.email,
-      "password": this.state.passwword
-    };
+    let to_send = {};
 
-    // if (this.state.first_name != this.state.userData.first_name){
-    //   to_send['first_name'] = this.state.first_name;
-    // }
+    if (this.state.first_name != this.state.userData.first_name && this.state.first_name != ""){
+      to_send['first_name'] = this.state.first_name;
+    }
 
-    console.log(JSON.stringify(to_send));
+    if (this.state.last_name != this.state.userData.last_name && this.state.last_name != ""){
+      to_send['last_name'] = this.state.last_name;
+    }
+
+    if (this.state.email != this.state.userData.email && this.state.email != ""){
+      to_send['email'] = this.state.email;
+    }
+
+    if (this.state.password != this.state.userData.password && this.state.password != ""){
+      to_send['password'] = this.state.password;
+    }
 
     const user_id = await AsyncStorage.getItem('whatsthat_user_id');
 
@@ -125,7 +132,7 @@ class ProfileScreen extends Component{
       method: "PATCH",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token"),
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(to_send)
     })
@@ -163,7 +170,7 @@ class ProfileScreen extends Component{
     }else{    
       return(
       <View style={styles.container}>
-        {/* <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100}} /> */}
+        <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} />
 
         <Text>First Name:</Text>
         <TextInput
