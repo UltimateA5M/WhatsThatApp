@@ -15,6 +15,7 @@ export default class SearchScreen extends Component{
         searchValue: "",
         error: "",
         submitted: false,
+        showUsers: false,
         isLoading: true,
         userData: [],
     }
@@ -27,7 +28,9 @@ export default class SearchScreen extends Component{
   }
   
   componentWillUnmount(){
-    this.unsubscribe();
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({ userData: [], showUsers: false })
+    });
   }
 
   checkLoggedIn = async () => {
@@ -60,10 +63,9 @@ export default class SearchScreen extends Component{
      .then((responseJson) => {
        this.setState({
          isLoading: false,
-         userData: responseJson
+         userData: responseJson,
+         showUsers: true
        })
-       console.log(responseJson);
-       console.log(this.state.userData);
      })
      .catch((error) => {
        console.log(error);
@@ -122,6 +124,61 @@ export default class SearchScreen extends Component{
     })
   }
 
+  async unblockUser( user_id ){
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
+        method: "DELETE",
+        headers: {
+            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            return response.json();
+        }else if(response.status === 400){
+            throw "You can't block yourself"
+        }else if(response.status === 401){
+            throw "Unauthorized"
+        }else if(response.status === 404){
+            throw "Not Found"
+        }else{
+            throw "Server Error"
+        }
+    })
+    .catch((error) => {
+        this.setState({"error": error})
+        this.setState({"submitted": false});
+    })
+  }
+
+  async getBlockedUsers(){
+    return fetch("http://localhost:3333/api/1.0.0/blocked",{
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+     .then((response) => {
+      if(response.status === 200){
+        console.log("users fetched successfully");
+        return response.json();
+      }else if(response.status === 401){
+        console.log("Unauthorized");
+      }else{
+        console.log("Server Error");
+      }
+     })
+     .then((responseJson) => {
+       this.setState({
+         isLoading: false,
+         userData: responseJson
+       })
+     })
+     .catch((error) => {
+       console.log(error);
+     })
+  }
+
+
   render(){
     if(this.state.isLoading){
       return(
@@ -147,18 +204,29 @@ export default class SearchScreen extends Component{
               </TouchableOpacity>
             </View>
 
+            { this.state.showUsers &&
+
             <FlatList
               data={this.state.userData}
               renderItem={(user) => (
                 <View>
                   <Text>Name: {user.item.given_name} {user.item.family_name}</Text>
                   <Text>Email: {user.item.email}</Text>
-                  <Button title="Add" style={styles.button} onPress={() => this.addContact(user.item.user_id)}/>
-                  <Button title="Block" style={styles.button} onPress={() => this.blockUser(user.item.user_id)}/>
+                  <TouchableOpacity onPress={() => this.addContact(user.item.user_id)}>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Add</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.blockUser(user.item.user_id)}>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Block</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               )}
               keyExtractor={(user, index) => user.user_id}
             />
+            }
           </View>
       );
     }

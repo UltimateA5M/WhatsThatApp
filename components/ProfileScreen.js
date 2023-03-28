@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { Text, View, StyleSheet, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { TextInput } from 'react-native-web';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class ProfileScreen extends Component{
+export default class ProfileScreen extends Component{
 
   constructor(props){
     super(props);
@@ -16,12 +16,10 @@ class ProfileScreen extends Component{
         email: "",
         password: "",
         userData: {},
-        isLoading: true,
-        editable: false       
+        isLoading: true
     };
 
     this.updateInfo = this.updateInfo.bind(this)
-    this.toggleEditable = this.toggleEditable.bind(this)
   }
 
   componentDidMount(){
@@ -42,12 +40,6 @@ class ProfileScreen extends Component{
       this.props.navigation.navigate('Login');
     }
   };
-
-  toggleEditable(){
-    this.setState({
-      editable: !this.state.editable
-    })
-  }
 
   async get_profile_image(){
     const user_id = await AsyncStorage.getItem('whatsthat_user_id');
@@ -100,7 +92,6 @@ class ProfileScreen extends Component{
          isLoading: false,
          userData: responseJson
        })
-      console.log(responseJson)
      })
      .catch((error) => {
        console.log(error);
@@ -156,6 +147,35 @@ class ProfileScreen extends Component{
      });
   }
 
+  async logout(){
+    console.log("Logout")
+
+    return fetch("http://localhost:3333/api/1.0.0/logout", {
+        method: "POST",
+        headers: {
+            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            await AsyncStorage.removeItem("whatsthat_session_token")
+            await AsyncStorage.removeItem("whatsthat_user_id")
+            this.props.navigation.navigate("Login")
+        }else if(response.status === 401){
+            console.log("Unauthorised")
+            await AsyncStorage.removeItem("whatsthat_session_token")
+            await AsyncStorage.removeItem("whatsthat_user_id")
+            this.props.navigation.navigate("Login")
+        }else{
+            throw "Something went wrong"
+        }
+    })
+    .catch((error) => {
+        // this.setState({"error": error})
+        // this.setState({"submitted": false});
+    })
+  }
+
   static navigationOptions = {
     header: null
   }
@@ -170,6 +190,13 @@ class ProfileScreen extends Component{
     }else{    
       return(
       <View style={styles.container}>
+
+        <TouchableOpacity onPress={() => this.logout()}>
+          <View style={styles.logoutButton}>
+            <Text style={styles.buttonText}>Logout</Text>
+          </View>
+        </TouchableOpacity>
+
         <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} />
 
         <Text>First Name:</Text>
@@ -177,21 +204,18 @@ class ProfileScreen extends Component{
           style={{height: 40, borderWidth: 1, width: "100%"}}
           defaultValue={this.state.userData.first_name}
           onChangeText={first_name => this.setState({first_name})}
-          //editable={this.state.editable}
           />
           <Text>Last Name:</Text>
           <TextInput
             style={{height: 40, borderWidth: 1, width: "100%"}}
             defaultValue={this.state.userData.last_name}
             onChangeText={last_name => this.setState({last_name})}
-            //editable={this.state.editable}
             />
           <Text>Email:</Text>
           <TextInput
             style={{height: 40, borderWidth: 1, width: "100%"}}
             defaultValue={this.state.userData.email}
             onChangeText={email => this.setState({email})}
-            //editable={this.state.editable}
           />
           <Text>Password:</Text>
           <TextInput
@@ -200,13 +224,7 @@ class ProfileScreen extends Component{
             onChangeText={password => this.setState({password})}
             secureTextEntry
           />
-          {/* <View>
-                  <TouchableOpacity onPress={this.toggleEditable}>
-                      <View style={styles.button}>
-                          <Text style={styles.buttonText}>Edit</Text>
-                      </View>
-                  </TouchableOpacity>
-              </View> */}
+
           <View>
             <TouchableOpacity onPress={() => this.updateInfo()}>
               <View style={styles.button}>
@@ -238,6 +256,11 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'white'
   },
+  logoutButton: {
+    marginBottom: 30,
+    backgroundColor: '#2196F3',
+    width: '50%',
+    alignSelf: "right"
+  },
 });
 
-export default ProfileScreen;

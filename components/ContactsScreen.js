@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-web';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,7 +11,8 @@ export default class ContactsScreen extends Component{
     this.state = {
         first_name: "",
         last_name: "",
-        email: "", 
+        email: "",
+        searchValue: "",
         isLoading: true,
         userData: [],
     }
@@ -35,6 +36,36 @@ export default class ContactsScreen extends Component{
     }
   };
 
+  async searchContacts(){
+    return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.searchValue + "&search_in=contacts",{
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+     .then((response) => {
+      if(response.status === 200){
+        console.log("contacts fetched successfully");
+        return response.json();
+      }else if(response.status === 401){
+        console.log("Unauthorized");
+      }else{
+        console.log("Server Error");
+      }
+     })
+     .then((responseJson) => {
+       this.setState({
+         isLoading: false,
+         userData: responseJson
+       })
+       console.log(responseJson);
+       console.log(this.state.userData);
+     })
+     .catch((error) => {
+       console.log(error);
+     })
+  }
+
   async getContacts(){
     return fetch("http://localhost:3333/api/1.0.0/contacts",{
       method: "get",
@@ -57,12 +88,13 @@ export default class ContactsScreen extends Component{
          isLoading: false,
          userData: responseJson
        })
-       console.log(responseJson);
+
      })
      .catch((error) => {
        console.log(error);
      })
   }
+  
 
   async deleteContact( user_id ){
     return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/contact", {
@@ -73,8 +105,8 @@ export default class ContactsScreen extends Component{
     })
     .then(async (response) => {
         if(response.status === 200){
-            return response.json();
             console.log("Contact Removed");
+            return response.json();
         }else if(response.status === 400){
             throw "You can't remove yourself as a contact"
         }else if(response.status === 401){
@@ -101,12 +133,33 @@ export default class ContactsScreen extends Component{
     }else{
       return(
           <View style={styles.container}>
+
+            <TextInput
+              style={{height: 40, borderWidth: 1, width: "100%", alignSelf: "center"}}
+              placeholder="Search..."
+              onChangeText={searchValue => this.setState({searchValue})}
+              defaultValue={this.state.searchValue}
+            />
+            
+            <View>
+              <TouchableOpacity onPress={() => this.searchContacts()}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>Search</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             <FlatList
               data={this.state.userData}
               renderItem={(contact) => (
                 <View>
                   <Text>{contact.item.first_name} {contact.item.last_name}</Text>
-                  <Button title="Remove" onPress={() => this.deleteContact(contact.item.user_id)}/>
+
+                  <TouchableOpacity onPress={() => this.deleteContact(contact.item.user_id)}>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Remove</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               )}
               keyExtractor={(contact, index) => contact.user_id}
@@ -123,6 +176,17 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "stretch",
     justifyContent: "center"
-  }
+  },
+  button: {
+    marginBottom: 30,
+    backgroundColor: '#2196F3',
+    width: '50%',
+    alignSelf: "center"
+  },
+  buttonText: {
+    textAlign: 'center',
+    padding: 20,
+    color: 'white'
+  },
 });
 
