@@ -17,11 +17,12 @@ export default class NewChatScreen extends Component{
     }
 
     this._onPressButton = this._onPressButton.bind(this)
+    this.newChat = this.newChat.bind(this)
   }
 
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.checkLoggedIn();
+      this.checkLoggedIn();      
     });
   }
   
@@ -38,16 +39,13 @@ export default class NewChatScreen extends Component{
 
   async newChat(){
 
-    let to_send = {
-      name: this.state.chat_name
-    };
-
     return fetch("http://localhost:3333/api/1.0.0/chat",{
-      method: "POST",
+      method: "post",
       headers: {
-        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(to_send)
+      body: JSON.stringify({name: this.state.chat_name})
     })
      .then((response) => {
       if(response.status === 201){
@@ -72,6 +70,8 @@ export default class NewChatScreen extends Component{
   _onPressButton(){
     this.newChat()
     
+    // validation here
+        
     this.props.navigation.navigate('Chats')
   }
 
@@ -90,7 +90,7 @@ export default class NewChatScreen extends Component{
               defaultValue={this.state.chat_name}
             />
 
-            <TouchableOpacity onPress={this._onPressButton}>
+            <TouchableOpacity onPress={this.newChat}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>Create Chat</Text>
               </View>
@@ -98,7 +98,7 @@ export default class NewChatScreen extends Component{
 
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Chats')}>
               <View style={styles.button}>
-                <Text style={styles.buttonText}>Cancel</Text>
+                <Text style={styles.buttonText}>Back</Text>
               </View>
             </TouchableOpacity>
 

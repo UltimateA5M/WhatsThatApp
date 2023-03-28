@@ -14,6 +14,7 @@ export default class ContactsScreen extends Component{
         email: "",
         searchValue: "",
         isLoading: true,
+        searched: false,
         userData: [],
     }
   }
@@ -27,6 +28,7 @@ export default class ContactsScreen extends Component{
   
   componentWillUnmount(){
     this.unsubscribe();
+    this.setState({ searched: false })
   }
 
   checkLoggedIn = async () => {
@@ -56,10 +58,9 @@ export default class ContactsScreen extends Component{
      .then((responseJson) => {
        this.setState({
          isLoading: false,
+         searched: true,
          userData: responseJson
        })
-       console.log(responseJson);
-       console.log(this.state.userData);
      })
      .catch((error) => {
        console.log(error);
@@ -89,6 +90,87 @@ export default class ContactsScreen extends Component{
          userData: responseJson
        })
 
+     })
+     .catch((error) => {
+       console.log(error);
+     })
+  }
+
+  async blockUser( user_id ){
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
+        method: "POST",
+        headers: {
+            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            console.log( "user blocked" )
+            return response.json();
+        }else if(response.status === 400){
+            throw "You can't block yourself"
+        }else if(response.status === 401){
+            throw "Unauthorized"
+        }else if(response.status === 404){
+            throw "Not Found"
+        }else{
+            throw "Server Error"
+        }
+    })
+    .catch((error) => {
+        this.setState({"error": error})
+        this.setState({"submitted": false});
+    })
+  }
+
+  async unblockUser( user_id ){
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
+        method: "DELETE",
+        headers: {
+            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+        }
+    })
+    .then(async (response) => {
+        if(response.status === 200){
+            return response.json();
+        }else if(response.status === 400){
+            throw "You can't block yourself"
+        }else if(response.status === 401){
+            throw "Unauthorized"
+        }else if(response.status === 404){
+            throw "Not Found"
+        }else{
+            throw "Server Error"
+        }
+    })
+    .catch((error) => {
+        this.setState({"error": error})
+        this.setState({"submitted": false});
+    })
+  }
+
+  async getBlockedUsers(){
+    return fetch("http://localhost:3333/api/1.0.0/blocked",{
+      method: "GET",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
+      }
+    })
+     .then((response) => {
+      if(response.status === 200){
+        console.log("users fetched successfully");
+        return response.json();
+      }else if(response.status === 401){
+        console.log("Unauthorized");
+      }else{
+        console.log("Server Error");
+      }
+     })
+     .then((responseJson) => {
+       this.setState({
+         isLoading: false,
+         userData: responseJson
+       })
      })
      .catch((error) => {
        console.log(error);
@@ -153,7 +235,21 @@ export default class ContactsScreen extends Component{
               data={this.state.userData}
               renderItem={(contact) => (
                 <View>
+                  <> 
+
+                    { this.state.searched &&                      
+                      <Text>{contact.item.given_name} {contact.item.family_name}</Text>
+                    }
+
+                  </>
+
                   <Text>{contact.item.first_name} {contact.item.last_name}</Text>
+
+                  <TouchableOpacity onPress={() => this.blockUser(contact.item.user_id)}>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Block</Text>
+                    </View>
+                  </TouchableOpacity>
 
                   <TouchableOpacity onPress={() => this.deleteContact(contact.item.user_id)}>
                     <View style={styles.button}>

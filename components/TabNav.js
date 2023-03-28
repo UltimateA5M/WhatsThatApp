@@ -8,6 +8,7 @@ import ProfileScreen from './ProfileScreen'
 import SearchScreen from './SearchScreen'
 import ContactsScreen from './ContactsScreen'
 import NewChatScreen from './NewChatScreen'
+import ViewChatScreen from './ViewChatScreen'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -38,6 +39,7 @@ export function ChatScreenStack() {
   initialRouteName="Home">
       <Stack.Screen name="Chats" component={ChatsScreen} options={{ title: "Chats" }} />
       <Stack.Screen name="NewChatScreen" component={NewChatScreen} options={{ title: "NewChatScreen" }} />
+      <Stack.Screen name="ViewChatScreen" component={ViewChatScreen} options={{ title: "ViewChatScreen" }} />
   </Stack.Navigator>
   );
 }

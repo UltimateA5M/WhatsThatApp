@@ -1,27 +1,26 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
 
-export default class ChatsScreen extends Component{
+export default class ViewChatScreen extends Component{
 
   constructor(props){
     super(props);
 
     this.state = {
         chat_id: "",
-        chat_name: "",
-        error: "",
-        submitted: false,
+        name: "",
         isLoading: true,
-        chatsData: [],
+        chatData: [],
     }
+
+    this._onPressButton = this._onPressButton.bind(this)
   }
 
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-    this.getChats();
   }
   
   componentWillUnmount(){
@@ -35,8 +34,9 @@ export default class ChatsScreen extends Component{
     }
   };
 
-  async getChats(){
-    return fetch("http://localhost:3333/api/1.0.0/chat",{
+  async loadChat( chat_id ){
+
+    return fetch("http://localhost:3333/api/1.0.0/chat/" + chat_id, {
       method: "GET",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
@@ -44,24 +44,35 @@ export default class ChatsScreen extends Component{
     })
      .then((response) => {
       if(response.status === 200){
-        console.log("chats fetched successfully");
+        console.log("Chat Loaded");
         return response.json();
       }else if(response.status === 401){
         console.log("Unauthorized");
+      }else if(response.status === 403){
+        console.log("Forbidden");
+      }else if(response.status === 404){
+        console.log("Chat not found");
       }else{
         console.log("Server Error");
       }
      })
-     .then((responseJson) => {
+     .then((responseJson) => {      
        this.setState({
          isLoading: false,
-         chatsData: responseJson
+         chatData: responseJson
        })
-       console.log(responseJson)
+      console.log(responseJson)
      })
      .catch((error) => {
        console.log(error);
-     })
+     });
+  }
+
+  _onPressButton(){
+    
+    // validation here
+        
+    this.props.navigation.navigate('Chats')
   }
 
   static navigationOptions = {
@@ -71,30 +82,18 @@ export default class ChatsScreen extends Component{
   render(){
     return(
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('NewChatScreen')}>
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>+Chat</Text>
-              </View>
-            </TouchableOpacity>
 
-            <FlatList
-              data={this.state.chatsData}
-              renderItem={(chat) => (
+        {/* <FlatList
+              data={this.state.chatData}
+              renderItem={(item) => (
                 <View>
-                  <Text> {JSON.stringify(chat)}</Text>
-                  
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen')}>
-                    <View>
-                      <Text>Chat Name: {chat.item.name} </Text>
-                    </View>
-                  </TouchableOpacity>
-
+                  <Text> {JSON.stringify(item)}</Text>
+                  <Text>Chat Name: {chat.item.name} </Text>
                 </View>
               )}
-              keyExtractor={(chat, index) => chat.chat_id}
-            />
-
-        </View>
+              keyExtractor={(item, index) => item.members.user_id}
+            /> */}
+      </View>
     );
   }
 }

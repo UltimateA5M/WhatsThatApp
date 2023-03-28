@@ -23,7 +23,8 @@ export default class SearchScreen extends Component{
 
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.checkLoggedIn();      
+      this.checkLoggedIn();
+      this.setState({ showUsers: false })
     });
   }
   
@@ -66,6 +67,7 @@ export default class SearchScreen extends Component{
          userData: responseJson,
          showUsers: true
        })
+       console.log(responseJson)
      })
      .catch((error) => {
        console.log(error);
@@ -97,87 +99,6 @@ export default class SearchScreen extends Component{
         this.setState({"submitted": false});
     })
   }
-
-  async blockUser( user_id ){
-    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
-        method: "POST",
-        headers: {
-            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
-        }
-    })
-    .then(async (response) => {
-        if(response.status === 200){
-            return response.json();
-        }else if(response.status === 400){
-            throw "You can't block yourself"
-        }else if(response.status === 401){
-            throw "Unauthorized"
-        }else if(response.status === 404){
-            throw "Not Found"
-        }else{
-            throw "Server Error"
-        }
-    })
-    .catch((error) => {
-        this.setState({"error": error})
-        this.setState({"submitted": false});
-    })
-  }
-
-  async unblockUser( user_id ){
-    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
-        method: "DELETE",
-        headers: {
-            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
-        }
-    })
-    .then(async (response) => {
-        if(response.status === 200){
-            return response.json();
-        }else if(response.status === 400){
-            throw "You can't block yourself"
-        }else if(response.status === 401){
-            throw "Unauthorized"
-        }else if(response.status === 404){
-            throw "Not Found"
-        }else{
-            throw "Server Error"
-        }
-    })
-    .catch((error) => {
-        this.setState({"error": error})
-        this.setState({"submitted": false});
-    })
-  }
-
-  async getBlockedUsers(){
-    return fetch("http://localhost:3333/api/1.0.0/blocked",{
-      method: "GET",
-      headers: {
-        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
-      }
-    })
-     .then((response) => {
-      if(response.status === 200){
-        console.log("users fetched successfully");
-        return response.json();
-      }else if(response.status === 401){
-        console.log("Unauthorized");
-      }else{
-        console.log("Server Error");
-      }
-     })
-     .then((responseJson) => {
-       this.setState({
-         isLoading: false,
-         userData: responseJson
-       })
-     })
-     .catch((error) => {
-       console.log(error);
-     })
-  }
-
 
   render(){
     if(this.state.isLoading){
@@ -217,11 +138,6 @@ export default class SearchScreen extends Component{
                       <Text style={styles.buttonText}>Add</Text>
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.blockUser(user.item.user_id)}>
-                    <View style={styles.button}>
-                      <Text style={styles.buttonText}>Block</Text>
-                    </View>
-                  </TouchableOpacity>
                 </View>
               )}
               keyExtractor={(user, index) => user.user_id}
@@ -243,7 +159,7 @@ const styles = StyleSheet.create({
   button: {
     marginBottom: 30,
     backgroundColor: '#2196F3',
-    width: '50%',
+    width: '40%',
     alignSelf: "center"
   },
   buttonText: {
