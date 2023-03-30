@@ -15,13 +15,14 @@ export default class ContactsScreen extends Component{
         searchValue: "",
         isLoading: true,
         searched: false,
+        showContacts: true,
         userData: [],
     }
   }
 
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.checkLoggedIn();      
+      this.checkLoggedIn();
     });
     this.getContacts();
   }
@@ -59,6 +60,7 @@ export default class ContactsScreen extends Component{
        this.setState({
          isLoading: false,
          searched: true,
+         showContacts: false,
          userData: responseJson
        })
      })
@@ -122,61 +124,6 @@ export default class ContactsScreen extends Component{
         this.setState({"submitted": false});
     })
   }
-
-  async unblockUser( user_id ){
-    return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/block", {
-        method: "DELETE",
-        headers: {
-            "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
-        }
-    })
-    .then(async (response) => {
-        if(response.status === 200){
-            return response.json();
-        }else if(response.status === 400){
-            throw "You can't block yourself"
-        }else if(response.status === 401){
-            throw "Unauthorized"
-        }else if(response.status === 404){
-            throw "Not Found"
-        }else{
-            throw "Server Error"
-        }
-    })
-    .catch((error) => {
-        this.setState({"error": error})
-        this.setState({"submitted": false});
-    })
-  }
-
-  async getBlockedUsers(){
-    return fetch("http://localhost:3333/api/1.0.0/blocked",{
-      method: "GET",
-      headers: {
-        "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
-      }
-    })
-     .then((response) => {
-      if(response.status === 200){
-        console.log("users fetched successfully");
-        return response.json();
-      }else if(response.status === 401){
-        console.log("Unauthorized");
-      }else{
-        console.log("Server Error");
-      }
-     })
-     .then((responseJson) => {
-       this.setState({
-         isLoading: false,
-         userData: responseJson
-       })
-     })
-     .catch((error) => {
-       console.log(error);
-     })
-  }
-  
 
   async deleteContact( user_id ){
     return fetch("http://localhost:3333/api/1.0.0/user/"+ user_id + "/contact", {
@@ -242,8 +189,14 @@ export default class ContactsScreen extends Component{
                     }
 
                   </>
+                  
+                  <>
 
-                  <Text>{contact.item.first_name} {contact.item.last_name}</Text>
+                    { this.state.showContacts &&
+                      <Text> {contact.item.first_name} {contact.item.last_name}</Text>
+                    }
+                  
+                  </>                  
 
                   <TouchableOpacity onPress={() => this.blockUser(contact.item.user_id)}>
                     <View style={styles.button}>
