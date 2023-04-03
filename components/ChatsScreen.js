@@ -20,8 +20,8 @@ export default class ChatsScreen extends Component{
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
-    });
-    this.getChats();
+      this.getChats();
+    });    
   }
   
   componentWillUnmount(){
@@ -81,9 +81,9 @@ export default class ChatsScreen extends Component{
               data={this.state.chatsData}
               renderItem={(chat) => (
                 <View>
-                  <Text> {JSON.stringify(chat)}</Text>
+                  <Text> HERE {JSON.stringify(chat)}</Text>
                   
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen', {data: this.state.chat_id})}>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen', {data: chat})}>
                     <View>
                       <Text>Chat Name: {chat.item.name} </Text>
                     </View>

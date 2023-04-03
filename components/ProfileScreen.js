@@ -197,7 +197,11 @@ export default class ProfileScreen extends Component{
           </View>
         </TouchableOpacity>
 
-        <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} />
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('CameraScreen', {data: this.state.userData})}>
+          <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} />
+        </TouchableOpacity>
+
+        {/* <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} /> */}
 
         <Text>First Name:</Text>
         <TextInput

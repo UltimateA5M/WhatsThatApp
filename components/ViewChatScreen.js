@@ -11,7 +11,8 @@ export default class ViewChatScreen extends Component{
         chat_id: "",
         name: "",
         isLoading: true,
-        chatData: [],
+        originalChatData: {},
+        chatData: {},
     }
 
     this._onPressButton = this._onPressButton.bind(this)
@@ -20,6 +21,11 @@ export default class ViewChatScreen extends Component{
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
+      this.setState({
+        originalChatData: this.props.route.params.data,
+        chat_id: this.props.route.params.data.chat_id
+      })
+      this.loadChat( this.state.chat_id );
     });
   }
   
@@ -80,8 +86,10 @@ export default class ViewChatScreen extends Component{
   }
 
   render(){
+    console.log("Original Data:" + this.state.originalChatData)
+    console.log("New Data:" + this.state.chatData)
     return(
-        <View style={styles.container}>
+        <View style={styles.container}>        
 
         {/* <FlatList
               data={this.state.chatData}

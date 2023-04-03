@@ -10,6 +10,7 @@ import ContactsScreen from './ContactsScreen'
 import NewChatScreen from './NewChatScreen'
 import ViewChatScreen from './ViewChatScreen'
 import BlockedContactsScreen from './BlockedContactsScreen'
+import CameraScreen from './CameraScreen'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,7 +28,7 @@ export default function TabNav() {
   }}
   initialRouteName="Profile">
       <Tab.Screen name="Chats" component={ChatScreenStack} options={{ title: "Chats" }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "Profile" }} />
+      <Tab.Screen name="Profile" component={ProfileScreenStack} options={{ title: "Profile" }} />
       <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search" }} />
       <Tab.Screen name="Contacts" component={ContactScreenStack} options={{ title: "Contacts" }} />
   </Tab.Navigator>
@@ -51,6 +52,16 @@ export function ContactScreenStack() {
   initialRouteName="Contacts">
       <Stack.Screen name="Contacts" component={ContactsScreen} options={{ title: "Contacts" }} />
       <Stack.Screen name="BlockedContacts" component={BlockedContactsScreen} options={{ title: "BlockedContactsScreen" }} />      
+  </Stack.Navigator>
+  );
+}
+
+export function ProfileScreenStack() {
+  return (
+  <Stack.Navigator screenOptions={{ headerShown: false }}
+  initialRouteName="Profile">
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: "Profile" }} />
+      <Stack.Screen name="CameraScreen" component={CameraScreen} options={{ title: "CameraScreen" }} />      
   </Stack.Navigator>
   );
 }
