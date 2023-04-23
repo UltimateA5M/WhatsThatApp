@@ -11,6 +11,9 @@ import NewChatScreen from './NewChatScreen'
 import ViewChatScreen from './ViewChatScreen'
 import BlockedContactsScreen from './BlockedContactsScreen'
 import CameraScreen from './CameraScreen'
+import ChatOptions from './ChatOptions'
+import MessageOptions from './MessageOptions'
+import AddUserToChat from './AddUserToChat'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -42,6 +45,9 @@ export function ChatScreenStack() {
       <Stack.Screen name="Chats" component={ChatsScreen} options={{ title: "Chats" }} />
       <Stack.Screen name="NewChatScreen" component={NewChatScreen} options={{ title: "NewChatScreen" }} />
       <Stack.Screen name="ViewChatScreen" component={ViewChatScreen} options={{ title: "ViewChatScreen" }} />
+      <Stack.Screen name="ChatOptions" component={ChatOptions} options={{ title: "ChatOptions" }} />
+      <Stack.Screen name="MessageOptions" component={MessageOptions} options={{ title: "MessageOptions" }} />
+      <Stack.Screen name="AddUserToChat" component={AddUserToChat} options={{ title: "AddUserToChat" }} />
   </Stack.Navigator>
   );
 }

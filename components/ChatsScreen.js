@@ -81,7 +81,7 @@ export default class ChatsScreen extends Component{
               data={this.state.chatsData}
               renderItem={(chat) => (
                 <View>
-                  <Text> HERE {JSON.stringify(chat)}</Text>
+                  {/* <Text> HERE {JSON.stringify(chat)}</Text> */}
                   
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen', {data: chat})}>
                     <View>

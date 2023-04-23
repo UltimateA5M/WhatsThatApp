@@ -22,13 +22,6 @@ export default function CameraScreen({route, navigation}){
         }
     }
 
-    // takePicture = async () => {
-    //     if(this.camera){
-    //         const options = {quality: 0.5, base64: true, onPictureSaved: (data) => this.sendToServer(data)};
-    //         await this.camera.takePictureAsync(options)
-    //     }
-    // }
-
     async function sendToServer(data){
         let id = route.params.data.user_id;
 
