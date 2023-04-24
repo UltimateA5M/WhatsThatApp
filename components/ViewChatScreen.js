@@ -111,22 +111,7 @@ export default class ViewChatScreen extends Component{
   render(){
     return(
         <View style={styles.container}>
-
-          <TextInput
-            style={{height: 40, borderWidth: 1, width: "50%", alignSelf: "flex-start"}}
-            placeholder="Enter Message.."
-            onChangeText={messageToSend => this.setState({messageToSend})}
-            defaultValue={this.state.messageToSend}
-          />
-          
-          <View>
-            <TouchableOpacity onPress={() => this.sendMessage()}>
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>Send</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
+         
           <View>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatOptions', {data: this.state.chatData, chat_id: this.state.chat_id})}>
               <View style={styles.button}>
@@ -148,6 +133,21 @@ export default class ViewChatScreen extends Component{
               keyExtractor={(message, index) => message.message_id}
               inverted={true}
           />
+
+          <TextInput
+            style={{height: 40, borderWidth: 1, width: "50%", alignSelf: "flex-start"}}
+            placeholder="Enter Message.."
+            onChangeText={messageToSend => this.setState({messageToSend})}
+            defaultValue={this.state.messageToSend}
+          />
+
+          <View>
+            <TouchableOpacity onPress={() => this.sendMessage()}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Send</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
           
         </View>
     );

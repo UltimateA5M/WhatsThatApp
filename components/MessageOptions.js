@@ -105,7 +105,7 @@ export default class ChatOptions extends Component{
     console.log("CHAT ID:" + this.state.chat_id + "MSG ID:"+ this.state.message_id + this.state.message_text)
     return(
         <View style={styles.container}>
-          <Text>message_text:</Text>
+          <Text>message:</Text>
           <TextInput
           style={{height: 40, borderWidth: 1, width: "100%"}}
           defaultValue={this.state.message_text}
@@ -123,12 +123,6 @@ export default class ChatOptions extends Component{
               <Text style={styles.buttonText}>Delete Message</Text>
             </View>
           </TouchableOpacity>
-          
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('AddUserToChat')}>
-            <View style={styles.button}>
-              <Text style={styles.buttonText}>Add User To Chat</Text>
-            </View>
-           </TouchableOpacity>
           
         </View>
     );
