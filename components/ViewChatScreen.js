@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, FlatList, TouchableHighlight, Touchable } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, FlatList, Button } from 'react-native';
 
 export default class ViewChatScreen extends Component{
 
@@ -8,6 +8,7 @@ export default class ViewChatScreen extends Component{
     super(props);
 
     this.state = {
+        current_user_id: "",
         creator_id: "",
         chat_id: "",
         name: "",
@@ -27,6 +28,7 @@ export default class ViewChatScreen extends Component{
         creator_id: this.props.route.params.data.item.creator.user_id,
       })
 
+      this.setUserId();
       this.loadChat( this.props.route.params.data.item.chat_id );
     });
   }
@@ -90,7 +92,6 @@ export default class ViewChatScreen extends Component{
       if(response.status === 200){
         console.log("Sent");
         this.loadChat( this.props.route.params.data.item.chat_id );
-        return response.json();
       }else if(response.status === 400){
         console.log("Bad Request");
       }else if(response.status === 401){
@@ -108,28 +109,65 @@ export default class ViewChatScreen extends Component{
      })
   }
 
+  async setUserId(){
+    this.setState({ current_user_id: await AsyncStorage.getItem("whatsthat_user_id")})
+  }
+
+  timestampConverter(timestamp){
+    let date = new Date(timestamp);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    if ( date.getMinutes()<10 ){
+      minutes = '0' + minutes;
+    }
+
+    return day + "/" + month + "/" + year + " " + hours + ":" + minutes
+  }
+
   render(){
     return(
         <View style={styles.container}>
          
           <View>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatOptions', {data: this.state.chatData, chat_id: this.state.chat_id})}>
-              <View style={styles.button}>
+              {/* <View style={styles.button}>
                 <Text style={styles.buttonText}>Chat Options</Text>
-              </View>
+              </View> */}
+                <Text style={{ alignSelf: "center", fontWeight: 'bold', fontSize: 24 }}> {this.state.chatData.name} </Text>
             </TouchableOpacity>
           </View>
 
           <FlatList
             data={this.state.chatData.messages}
-            renderItem={(message) => (
-              <View>
-                {/* <Text> {JSON.stringify(message)}</Text> */}
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('MessageOptions', {data: message, chat_id: this.state.chat_id})}>
-                  <Text> {message.item.author.first_name}: {message.item.message}</Text>
-                </TouchableOpacity>
-              </View>
-              )}
+            renderItem={(message) => {
+
+              if ( message.item.author.user_id == this.state.current_user_id){
+                return(
+                  <View style={{ alignSelf: "flex-end", margin: 15 }}>
+                    {/* <Text> {JSON.stringify(message)} </Text> */}
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('MessageOptions', {data: message, chat_id: this.state.chat_id})}>
+                      <Text> {message.item.author.first_name}: {message.item.message}</Text>
+                      <Text> {this.timestampConverter(message.item.timestamp) } </Text>
+                      <Text> {" "} </Text>
+                    </TouchableOpacity>
+                  </View>
+                )
+              }
+              else{
+                return(
+                  <View style={{ margin: 10 }}>          
+                    <Text> {message.item.author.first_name}: {message.item.message}</Text>
+                    <Text> {this.timestampConverter(message.item.timestamp) } </Text>
+                    <Text> {" "} </Text>
+                  </View>
+                )
+              }
+            }}
               keyExtractor={(message, index) => message.message_id}
               inverted={true}
           />
@@ -141,13 +179,15 @@ export default class ViewChatScreen extends Component{
             defaultValue={this.state.messageToSend}
           />
 
-          <View>
+          {/* <View>
             <TouchableOpacity onPress={() => this.sendMessage()}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>Send</Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
+
+          <Button style={styles.button} onPress={() => this.sendMessage()} title="Send" />
           
         </View>
     );
@@ -169,7 +209,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: 'center',
-    padding: 20,
+    padding: 15,
     color: 'white'
   },
 });

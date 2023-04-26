@@ -13,6 +13,8 @@ export default class SearchScreen extends Component{
         last_name: "",
         email: "",
         searchValue: "",
+        offset: 0,
+        limit: 2,
         error: "",
         submitted: false,
         showUsers: false,
@@ -45,7 +47,7 @@ export default class SearchScreen extends Component{
   };
 
   async search(){
-    return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.searchValue,{
+    return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.searchValue + "&limit=" + this.state.limit + "&offset=" + this.state.offset,{
       method: "GET",
       headers: {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_session_token")
@@ -100,6 +102,30 @@ export default class SearchScreen extends Component{
     })
   }
 
+  increaseOffsetVal(){
+    if(this.state.userData.length < this.state.limit){
+      console.log("End of array reached")
+    }
+    else{
+      this.setState({ offset: this.state.offset+this.state.limit})
+      this.search()
+    }
+    console.log(this.state.offset)
+  }
+
+  decreaseOffsetVal(){
+    if( this.state.offset > 0 )
+    {
+      this.setState({ offset: this.state.offset-this.state.limit})
+      this.search()
+    }
+    else{
+      console.log("Start of array reached")
+      this.setState({ offset: 0})
+    }
+    console.log(this.state.offset)
+  }
+
   render(){
     if(this.state.isLoading){
       return(
@@ -143,6 +169,24 @@ export default class SearchScreen extends Component{
               keyExtractor={(user, index) => user.user_id}
             />
             }
+
+              <View>
+              <TouchableOpacity onPress={() => this.decreaseOffsetVal()}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>Back</Text>
+                </View>
+              </TouchableOpacity>
+              </View>
+
+
+            <View>
+              <TouchableOpacity onPress={() => this.increaseOffsetVal()}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>Next</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
           </View>
       );
     }
