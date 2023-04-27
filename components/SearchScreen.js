@@ -14,7 +14,7 @@ export default class SearchScreen extends Component{
         email: "",
         searchValue: "",
         offset: 0,
-        limit: 2,
+        limit: 3,
         error: "",
         submitted: false,
         showUsers: false,
@@ -107,8 +107,7 @@ export default class SearchScreen extends Component{
       console.log("End of array reached")
     }
     else{
-      this.setState({ offset: this.state.offset+this.state.limit})
-      this.search()
+      this.setState({ offset: this.state.offset+this.state.limit}, () => this.search())
     }
     console.log(this.state.offset)
   }
@@ -116,8 +115,7 @@ export default class SearchScreen extends Component{
   decreaseOffsetVal(){
     if( this.state.offset > 0 )
     {
-      this.setState({ offset: this.state.offset-this.state.limit})
-      this.search()
+      this.setState({ offset: this.state.offset-this.state.limit}, () => this.search())
     }
     else{
       console.log("Start of array reached")
@@ -170,22 +168,29 @@ export default class SearchScreen extends Component{
             />
             }
 
-              <View>
-              <TouchableOpacity onPress={() => this.decreaseOffsetVal()}>
-                <View style={styles.button}>
-                  <Text style={styles.buttonText}>Back</Text>
-                </View>
-              </TouchableOpacity>
-              </View>
-
+            { this.state.offset > 0 &&
 
             <View>
-              <TouchableOpacity onPress={() => this.increaseOffsetVal()}>
-                <View style={styles.button}>
-                  <Text style={styles.buttonText}>Next</Text>
-                </View>
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.decreaseOffsetVal()}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Back</Text>
+              </View>
+            </TouchableOpacity>
             </View>
+
+            }
+
+            { this.state.userData.length == this.state.limit &&
+
+            <View>
+            <TouchableOpacity onPress={() => this.increaseOffsetVal()}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Next</Text>
+              </View>
+            </TouchableOpacity>
+            </View>
+
+            }
 
           </View>
       );

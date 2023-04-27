@@ -52,6 +52,10 @@ export default class LoginScreen extends Component {
                 throw "Something went wrong"
             }
         })
+        .catch((error) => {
+            this.setState({"error": error})
+            this.setState({"submitted": false});
+        });
     }
 
     _onPressButton(){

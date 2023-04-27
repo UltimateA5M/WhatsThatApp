@@ -85,7 +85,8 @@ export default class ChatsScreen extends Component{
                   
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen', {data: chat})}>
                     <View>
-                      <Text>Chat Name: {chat.item.name} </Text>
+                      <Text>{chat.item.name}</Text>
+                      <Text>{" "}{chat.item.last_message.message}</Text>
                     </View>
                   </TouchableOpacity>
 
