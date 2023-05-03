@@ -178,6 +178,14 @@ export default class ContactsScreen extends Component{
               </TouchableOpacity>
             </View>
 
+            <View>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('BlockedContacts')}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>View Blocked Contacts</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             <FlatList
               data={this.state.userData}
               renderItem={(contact) => (
