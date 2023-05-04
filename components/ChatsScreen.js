@@ -64,6 +64,22 @@ export default class ChatsScreen extends Component{
      })
   }
 
+  timestampConverter(timestamp){
+    let date = new Date(timestamp);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    if ( date.getMinutes()<10 ){
+      minutes = '0' + minutes;
+    }
+
+    return day + "/" + month + "/" + year + " " + hours + ":" + minutes
+  }
+
   static navigationOptions = {
     header: null
   }
@@ -84,9 +100,10 @@ export default class ChatsScreen extends Component{
                   {/* <Text> HERE {JSON.stringify(chat)}</Text> */}
                   
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewChatScreen', {data: chat})}>
-                    <View>
+                    <View style={{ marginStart: 10 }}>
                       <Text>{chat.item.name}</Text>
                       <Text>{" "}{chat.item.last_message.message}</Text>
+                      <Text> {" " + this.timestampConverter(chat.item.last_message.timestamp)} </Text>
                     </View>
                   </TouchableOpacity>
 
@@ -108,10 +125,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   button: {
-    marginBottom: 30,
+    marginTop: 10,
+    marginRight: 10,
     backgroundColor: '#2196F3',
-    width: '50%',
-    alignSelf: "center"
+    width: '25%',
+    length: '10%',
+    borderRadius: 4,
+    alignSelf: 'center'
   },
   buttonText: {
     textAlign: 'center',

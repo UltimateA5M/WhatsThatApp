@@ -11,8 +11,9 @@ export default class LoginScreen extends Component {
         this.state = {
             email: "asim@gmail.com",
             password: "Password123!",
-            error: "", 
-            submitted: false
+            error: "",
+            submitted: false,
+            success: false
         }
 
         this._onPressButton = this._onPressButton.bind(this)
@@ -47,7 +48,12 @@ export default class LoginScreen extends Component {
 
                 this.setState({"submitted": false});
 
-                this.props.navigation.navigate('Tab')
+                this.setState({success: true})
+                setTimeout(()=> {
+                    this.setState({success: false})
+                    this.props.navigation.navigate('Tab')
+                }, 1000);
+
             }catch{
                 throw "Something went wrong"
             }
@@ -79,9 +85,9 @@ export default class LoginScreen extends Component {
 
                 <View>
                     <View style={styles.email}>
-                        <Text>Email:</Text>
+                        <Text style={{ marginStart: 10 }}>Email:</Text>
                         <TextInput
-                            style={{height: 40, borderWidth: 1, width: "100%"}}
+                            style={styles.textFields}
                             placeholder="Enter email"
                             onChangeText={email => this.setState({email})}
                             defaultValue={this.state.email}
@@ -95,9 +101,9 @@ export default class LoginScreen extends Component {
                     </View>
             
                     <View style={styles.password}>
-                        <Text>Password:</Text>
+                        <Text style={{ marginStart: 10 }}>Password:</Text>
                         <TextInput
-                            style={{height: 40, borderWidth: 1, width: "100%"}}
+                            style={styles.textFields}
                             placeholder="Enter password"
                             onChangeText={password => this.setState({password})}
                             defaultValue={this.state.password}
@@ -118,6 +124,12 @@ export default class LoginScreen extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
+
+                    <>
+                        {this.state.success &&
+                            <Text style={styles.success}>Login Successful</Text>
+                        }
+                    </>
 
                     <>
                         {this.state.error &&
@@ -153,10 +165,14 @@ const styles = StyleSheet.create({
       textDecorationLine: "underline"
     },
     button: {
-      marginBottom: 30,
-      backgroundColor: '#2196F3',
-      width: '50%',
-      alignSelf: "center"
+        marginBottom: 30,
+        marginTop: 10,
+        marginRight: 10,
+        backgroundColor: '#2196F3',
+        width: '25%',
+        length: '10%',
+        borderRadius: 4,
+        alignSelf: 'center'
     },
     buttonText: {
       textAlign: 'center',
@@ -166,5 +182,15 @@ const styles = StyleSheet.create({
     error: {
         color: "red",
         fontWeight: '900'
+    },
+    success: {
+        color: "green",
+        fontWeight: '900'
+    },
+    textFields:{
+        height: 35, 
+        borderWidth: 1, 
+        width: "80%", 
+        alignSelf:'center'
     }
   });

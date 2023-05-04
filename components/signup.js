@@ -13,7 +13,8 @@ export default class SignupScreen extends Component {
             last_name: "",
             email: "",
             password: "",
-            error: "", 
+            error: "",
+            success: false,
             submitted: false
         }
 
@@ -47,7 +48,12 @@ export default class SignupScreen extends Component {
             console.log(rJson)
             this.setState({"error": "User added successfully"})
             this.setState({"submitted": false})
-            this.props.navigation.navigate('Login')
+            this.setState({success: true})
+            
+            setTimeout(()=> {
+                this.setState({success: false})
+                this.props.navigation.navigate('Login')
+            }, 3000);            
         })
         .catch((error) => {
             this.setState({"error": error})
@@ -77,7 +83,7 @@ export default class SignupScreen extends Component {
 
         console.log("Button clicked: " + this.state.email + " " + this.state.password)
         console.log("Validated and ready to send to the API")
-
+        
         this.addUser()
     }
 
@@ -160,6 +166,12 @@ export default class SignupScreen extends Component {
                     </View>
 
                     <>
+                        {this.state.success &&
+                            <Text style={styles.success}>Sign Up Successful</Text>
+                        }
+                    </>
+
+                    <>
                         {this.state.error &&
                             <Text style={styles.error}>{this.state.error}</Text>
                         }
@@ -203,6 +215,10 @@ const styles = StyleSheet.create({
     },
     error: {
         color: "red",
+        fontWeight: '900'
+    },
+    success: {
+        color: "green",
         fontWeight: '900'
     }
   });

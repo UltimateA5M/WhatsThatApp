@@ -203,27 +203,27 @@ export default class ProfileScreen extends Component{
 
         {/* <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100, alignSelf: "center"}} /> */}
 
-        <Text>First Name:</Text>
+        <Text style={{ marginStart: 10 }}>First Name:</Text>
         <TextInput
-          style={{height: 40, borderWidth: 1, width: "100%"}}
+          style={styles.textFields}
           defaultValue={this.state.userData.first_name}
           onChangeText={first_name => this.setState({first_name})}
           />
-          <Text>Last Name:</Text>
+          <Text style={{ marginStart: 10 }}>Last Name:</Text>
           <TextInput
-            style={{height: 40, borderWidth: 1, width: "100%"}}
+            style={styles.textFields}
             defaultValue={this.state.userData.last_name}
             onChangeText={last_name => this.setState({last_name})}
             />
-          <Text>Email:</Text>
+          <Text style={{ marginStart: 10 }}>Email:</Text>
           <TextInput
-            style={{height: 40, borderWidth: 1, width: "100%"}}
+            style={styles.textFields}
             defaultValue={this.state.userData.email}
             onChangeText={email => this.setState({email})}
           />
-          <Text>Password:</Text>
+          <Text style={{ marginStart: 10 }}>Password:</Text>
           <TextInput
-            style={{height: 40, borderWidth: 1, width: "100%"}}  
+            style={styles.textFields}  
             defaultValue="password..."
             onChangeText={password => this.setState({password})}
             secureTextEntry
@@ -250,10 +250,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   button: {
-    marginBottom: 30,
+    marginTop: 10,
+    marginRight: 10,
     backgroundColor: '#2196F3',
-    width: '50%',
-    alignSelf: "center"
+    width: '25%',
+    length: '10%',
+    borderRadius: 4,
+    alignSelf: 'center'
   },
   buttonText: {
     textAlign: 'center',
@@ -261,10 +264,18 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   logoutButton: {
-    marginBottom: 30,
+    marginBottom: 40,
     backgroundColor: '#2196F3',
-    width: '50%',
-    alignSelf: "right"
+    width: '25%',
+    length: '10%',
+    borderRadius: 4,
+    alignSelf: "flex-end"
   },
+  textFields:{
+    height: 35, 
+    borderWidth: 1, 
+    width: "80%", 
+    alignSelf:'center'
+  }
 });
 

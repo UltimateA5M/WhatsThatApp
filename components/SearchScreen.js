@@ -135,7 +135,7 @@ export default class SearchScreen extends Component{
       return(
           <View style={styles.container}>
             <TextInput
-              style={{height: 40, borderWidth: 1, width: "100%", alignSelf: "center"}}
+              style={{height: 40, borderWidth: 1, marginTop: 10, width: "80%", alignSelf: "center"}}
               placeholder="Search..."
               onChangeText={searchValue => this.setState({searchValue})}
               defaultValue={this.state.searchValue}
@@ -143,7 +143,7 @@ export default class SearchScreen extends Component{
             
             <View>
               <TouchableOpacity onPress={() => this.search()}>
-                <View style={styles.button}>
+                <View style={styles.searchButton}>
                   <Text style={styles.buttonText}>Search</Text>
                 </View>
               </TouchableOpacity>
@@ -154,7 +154,7 @@ export default class SearchScreen extends Component{
             <FlatList
               data={this.state.userData}
               renderItem={(user) => (
-                <View>
+                <View style={{ marginLeft: 10 }}>
                   <Text>Name: {user.item.given_name} {user.item.family_name}</Text>
                   <Text>Email: {user.item.email}</Text>
                   <TouchableOpacity onPress={() => this.addContact(user.item.user_id)}>
@@ -172,7 +172,7 @@ export default class SearchScreen extends Component{
 
             <View>
             <TouchableOpacity onPress={() => this.decreaseOffsetVal()}>
-              <View style={styles.button}>
+              <View style={styles.searchButton}>
                 <Text style={styles.buttonText}>Back</Text>
               </View>
             </TouchableOpacity>
@@ -184,7 +184,7 @@ export default class SearchScreen extends Component{
 
             <View>
             <TouchableOpacity onPress={() => this.increaseOffsetVal()}>
-              <View style={styles.button}>
+              <View style={styles.searchButton}>
                 <Text style={styles.buttonText}>Next</Text>
               </View>
             </TouchableOpacity>
@@ -201,20 +201,36 @@ export default class SearchScreen extends Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "80%",
+    width: "100%",
     alignItems: "stretch",
     justifyContent: "center"
   },
-  button: {
-    marginBottom: 30,
+  searchButton: {
+    marginBottom: 40,
+    marginTop: 10,
     backgroundColor: '#2196F3',
-    width: '40%',
+    width: '25%',
+    length: '10%',
+    borderRadius: 4,
     alignSelf: "center"
+  },
+  button: {
+    marginTop: 10,
+    marginRight: 10,
+    backgroundColor: '#2196F3',
+    width: '25%',
+    length: '10%',
+    borderRadius: 4,
+    alignSelf: "flex-end"
   },
   buttonText: {
     textAlign: 'center',
     padding: 20,
     color: 'white'
   },
+  error: {
+    color: "red",
+    fontWeight: '900'
+  }
 });
 

@@ -172,22 +172,22 @@ export default class ViewChatScreen extends Component{
               inverted={true}
           />
 
-          <TextInput
-            style={{height: 40, borderWidth: 1, width: "50%", alignSelf: "flex-start"}}
-            placeholder="Enter Message.."
-            onChangeText={messageToSend => this.setState({messageToSend})}
-            defaultValue={this.state.messageToSend}
-          />
-
-          {/* <View>
+          <View>
             <TouchableOpacity onPress={() => this.sendMessage()}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>Send</Text>
               </View>
             </TouchableOpacity>
-          </View> */}
+          </View>
 
-          <Button style={styles.button} onPress={() => this.sendMessage()} title="Send" />
+          <TextInput
+            style={{height: 35, borderWidth: 1, marginBottom:20, marginLeft:5, marginRight:5, width: "70%", alignSelf: "flex-start"}}
+            placeholder="Enter Message.."
+            onChangeText={messageToSend => this.setState({messageToSend})}
+            defaultValue={this.state.messageToSend}
+          />
+
+          {/* <Button style={styles.button} onPress={() => this.sendMessage()} title="Send" /> */}
           
         </View>
     );
@@ -202,10 +202,10 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   button: {
-    marginBottom: 20,
     backgroundColor: '#2196F3',
-    width: '25%',
-    alignSelf: "flex-end",
+    width: '20%',
+    borderRadius: 4,
+    alignSelf: 'flex-end',
   },
   buttonText: {
     textAlign: 'center',

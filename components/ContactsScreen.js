@@ -16,6 +16,7 @@ export default class ContactsScreen extends Component{
         isLoading: true,
         searched: false,
         showContacts: true,
+        success: false,
         userData: [],
     }
   }
@@ -23,8 +24,8 @@ export default class ContactsScreen extends Component{
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
+      this.getContacts();
     });
-    this.getContacts();
   }
   
   componentWillUnmount(){
@@ -108,8 +109,10 @@ export default class ContactsScreen extends Component{
     .then(async (response) => {
         if(response.status === 200){
             console.log( "user blocked" )
+            this.getContacts()
             return response.json();
         }else if(response.status === 400){
+            this.setState({"error": "You can't block yourself"})
             throw "You can't block yourself"
         }else if(response.status === 401){
             throw "Unauthorized"
@@ -135,6 +138,7 @@ export default class ContactsScreen extends Component{
     .then(async (response) => {
         if(response.status === 200){
             console.log("Contact Removed");
+            this.getContacts()
             return response.json();
         }else if(response.status === 400){
             throw "You can't remove yourself as a contact"
@@ -239,7 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     width: '50%',
     alignSelf: "center"
-  },
+  },  
   buttonText: {
     textAlign: 'center',
     padding: 20,
