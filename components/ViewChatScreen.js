@@ -13,9 +13,12 @@ export default class ViewChatScreen extends Component{
         chat_id: "",
         name: "",
         messageToSend: "",
+        error: "",
         isLoading: true,
         chatData: {},
     }
+
+    this._onPressButton = this._onPressButton.bind(this)
   }
 
   componentDidMount(){
@@ -31,11 +34,16 @@ export default class ViewChatScreen extends Component{
       this.setUserId();
       this.loadChat( this.props.route.params.data.item.chat_id );
     });
+
+    this.interval = setInterval(() => {
+        this.loadChat( this.props.route.params.data.item.chat_id );
+      }, 2000)
   }
   
   componentWillUnmount(){
+    clearInterval(this.interval)
     this.unsubscribe();
-  }
+  }  
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('whatsthat_session_token');
@@ -43,6 +51,10 @@ export default class ViewChatScreen extends Component{
       this.props.navigation.navigate('Login');
     }
   };
+
+  async setUserId(){
+    this.setState({ current_user_id: await AsyncStorage.getItem("whatsthat_user_id")})
+  }
 
   async loadChat( chat_id ){
 
@@ -76,7 +88,7 @@ export default class ViewChatScreen extends Component{
      .catch((error) => {
        console.log(error);
      });
-  }
+  }  
 
   async sendMessage(){
 
@@ -109,8 +121,17 @@ export default class ViewChatScreen extends Component{
      })
   }
 
-  async setUserId(){
-    this.setState({ current_user_id: await AsyncStorage.getItem("whatsthat_user_id")})
+  _onPressButton(){
+    this.setState({error: ""})
+
+    if(!this.state.messageToSend){
+        this.setState({error: "Cannot send empty message"})
+        return;
+    }
+
+    console.log("Validated and ready to send to the API")
+
+    this.sendMessage()
   }
 
   timestampConverter(timestamp){
@@ -150,7 +171,7 @@ export default class ViewChatScreen extends Component{
                 return(
                   <View style={{ alignSelf: "flex-end", margin: 15 }}>
                     {/* <Text> {JSON.stringify(message)} </Text> */}
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('MessageOptions', {data: message, chat_id: this.state.chat_id})}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('MessageOptions', {data: message, chat_id: this.state.chat_id, chatObj: this.state.chatData})}>
                       <Text> {message.item.author.first_name}: {message.item.message}</Text>
                       <Text> {this.timestampConverter(message.item.timestamp) } </Text>
                       <Text> {" "} </Text>
@@ -172,8 +193,14 @@ export default class ViewChatScreen extends Component{
               inverted={true}
           />
 
+          <>
+            {this.state.error &&
+                <Text style={styles.error}>{this.state.error}</Text>
+            }
+          </>
+
           <View>
-            <TouchableOpacity onPress={() => this.sendMessage()}>
+            <TouchableOpacity onPress={() => this._onPressButton()}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>Send</Text>
               </View>
@@ -211,5 +238,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 15,
     color: 'white'
+  },
+  error: {
+    color: "red",
+    fontWeight: '900'
   },
 });

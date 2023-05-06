@@ -85,7 +85,7 @@ export default class ChatOptions extends Component{
     })
     .then(async (response) => {
         if(response.status === 200){
-            console.log("Message Deleted");
+            console.log("Message Deleted");            
         }else if(response.status === 403){
             throw "Forbidden"
         }else if(response.status === 401){
