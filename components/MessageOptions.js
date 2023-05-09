@@ -12,9 +12,11 @@ export default class ChatOptions extends Component {
       chat_id: '',
       message_id: '',
       messageText: '',
+      submitted: 'false',
+      error: '',
     };
 
-    this.updateMessage = this.updateMessage.bind(this);
+    this.onPressButton = this.onPressButton.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
   }
 
@@ -32,6 +34,20 @@ export default class ChatOptions extends Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  onPressButton() {
+    this.setState({ submitted: true });
+    this.setState({ error: '' });
+
+    if (!(this.state.messageText)) {
+      this.setState({ error: 'Text cannot be blank!' });
+      return;
+    }
+
+    console.log('Validated and ready to send to the API');
+
+    this.updateMessage();
   }
 
   checkLoggedIn = async () => {
@@ -71,6 +87,8 @@ export default class ChatOptions extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.setState({ error });
+        this.setState({ submitted: false });
       });
   }
 
@@ -110,7 +128,12 @@ export default class ChatOptions extends Component {
           onChangeText={(messageText) => this.setState({ messageText })}
         />
 
-        <TouchableOpacity onPress={() => this.updateMessage()}>
+        <>
+          {this.state.submitted && !this.state.messageText
+          && <Text style={styles.error}>{this.state.error}</Text>}
+        </>
+
+        <TouchableOpacity onPress={() => this.onPressButton()}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Update Message</Text>
           </View>
@@ -146,5 +169,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     color: 'white',
+  },
+  error: {
+    color: 'red',
+    fontWeight: '900',
+    marginLeft: 10,
   },
 });

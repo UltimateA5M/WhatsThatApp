@@ -75,7 +75,6 @@ export default class SignupScreen extends Component {
       })
       .then((rJson) => {
         console.log(rJson);
-        this.setState({ error: 'User added successfully' });
         this.setState({ submitted: false });
         this.setState({ success: true });
 

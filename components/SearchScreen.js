@@ -105,15 +105,20 @@ export default class SearchScreen extends Component {
     })
       .then(async (response) => {
         if (response.status === 200) {
-          return response.json();
+          console.log('Added as contact');
         } if (response.status === 400) {
           this.setState({ error: "You can't add yourself as a contact" });
+
+          setTimeout(() => {
+            this.setState({ error: '' });
+          }, 3000);
+
           throw "You can't add yourself as a contact";
         } else if (response.status === 401) {
           throw 'Unauthorized';
         } else if (response.status === 404) {
           throw 'Not Found';
-        } else {
+        } else if (response.status === 500) {
           throw 'Server Error';
         }
       })

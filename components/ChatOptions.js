@@ -12,6 +12,8 @@ export default class ChatOptions extends Component {
       chat_id: '',
       chatName: '',
       isLoading: true,
+      submitted: 'false',
+      error: '',
       chatData: {},
       photo: {},
     };
@@ -31,6 +33,20 @@ export default class ChatOptions extends Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  onPressButton() {
+    this.setState({ submitted: true });
+    this.setState({ error: '' });
+
+    if (!(this.state.chatName)) {
+      this.setState({ error: 'Must enter a name for the chat' });
+      return;
+    }
+
+    console.log('Validated and ready to send to the API');
+
+    this.updateChatInfo();
   }
 
   async getProfileImage(userId) {
@@ -88,6 +104,8 @@ export default class ChatOptions extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.setState({ error });
+        this.setState({ submitted: false });
       });
   }
 
@@ -143,8 +161,13 @@ export default class ChatOptions extends Component {
           defaultValue={this.state.chatName}
         />
 
+        <>
+          {this.state.submitted && !this.state.chatName
+          && <Text style={styles.error}>{this.state.error}</Text>}
+        </>
+
         <View>
-          <TouchableOpacity onPress={() => this.updateChatInfo()}>
+          <TouchableOpacity onPress={() => this.onPressButton()}>
             <View style={styles.button}>
               <Text style={styles.buttonText}>Update</Text>
             </View>
@@ -206,5 +229,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     color: 'white',
+  },
+  error: {
+    color: 'red',
+    fontWeight: '900',
+    marginLeft: 10,
   },
 });

@@ -96,14 +96,13 @@ export default class BlockedContactsScreen extends Component {
       .then(async (response) => {
         if (response.status === 200) {
           console.log('user unblocked');
-          return response.json();
         } if (response.status === 400) {
           throw "You can't block yourself";
         } else if (response.status === 401) {
           throw 'Unauthorized';
         } else if (response.status === 404) {
           throw 'Not Found';
-        } else {
+        } else if (response.status === 500) {
           throw 'Server Error';
         }
       })

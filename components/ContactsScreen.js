@@ -133,7 +133,7 @@ export default class ContactsScreen extends Component {
           throw 'Unauthorized';
         } else if (response.status === 404) {
           throw 'Not Found';
-        } else {
+        } else if (response.status === 500) {
           throw 'Server Error';
         }
       })
@@ -153,14 +153,13 @@ export default class ContactsScreen extends Component {
         if (response.status === 200) {
           console.log('Contact Removed');
           this.getContacts();
-          return response.json();
         } if (response.status === 400) {
           throw "You can't remove yourself as a contact";
         } else if (response.status === 401) {
           throw 'Unauthorized';
         } else if (response.status === 404) {
           throw 'Not Found';
-        } else {
+        } else if (response.status === 500) {
           throw 'Server Error';
         }
       })
